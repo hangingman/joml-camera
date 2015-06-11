@@ -25,3 +25,5 @@ For certain 3D games or a cinematic demonstration this however creates an unnatu
 
 Cameras in joml-camera therefore make use of physically based movements which comply with Newton's second law, taking mass and inertia into account when moving or rotating a camera.
 You can configure the mass and the maximum linear and angular acceleration of a camera. After that, you give a camera its desired target position and target rotation angles and the camera will try to reach that target within physical constraints.
+
+The goal with physically based movement is that a camera will never instantaneously stop or revert movement or rotation. It will always behave in a realistic way giving it a natural feeling as if it was a real camera in your scene.

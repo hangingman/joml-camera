@@ -16,3 +16,12 @@ Different kinds of 3D applications have different needs for their camera control
 
 - Arcball Camera: Lets you move on a spherical surface and view a single point in space
 - Free Camera: You can freely look around and move the camera in the scene
+
+Physically Based Behaviour
+--------------------------
+
+Typically, camera controls in 3D digital content creation tools, such as Houdini, 3DS Max or Blender perform their movement immediately and abruptly with the user moving the input device (i.e. mouse). For these tools, this is desired, as it gives direct and accurate feedback to the user's interaction.
+For certain 3D games or a cinematic demonstrations this however creates an unnatural feeling, because camera movements seem choppy. In life however nothing happens instantaneously but always continuously with a given "smoothness."
+
+Cameras in joml-camera therefore make use of physically based movements which comply with Newton's second law, taking mass and inertia into account when moving or rotating a camera.
+You can configure the mass and the maximum linear and angular acceleration of a camera. After that, you give a camera its desired target position and target rotation angles and the camera will try to reach that target within physical constraints.

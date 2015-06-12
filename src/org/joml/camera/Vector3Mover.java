@@ -94,7 +94,7 @@ public class Vector3Mover {
     private final Vector3f perpendicularAcceleration = new Vector3f();
     private final Vector3f newAcceleration = new Vector3f();
     private final Vector3f newVelocity = new Vector3f();
-    private final Vector3f newCurrent = new Vector3f();
+    private final Vector3f way = new Vector3f();
 
     /**
      * Update the simulation based on the elapsed time since the last update.
@@ -207,9 +207,14 @@ public class Vector3Mover {
         newVelocity.set(newAcceleration).mul(elapsedTimeInSeconds).add(velocity);
         velocity.set(newVelocity);
 
+        way.set(velocity).mul(elapsedTimeInSeconds);
+        if (way.length() > currentToTarget.length()) {
+        	velocity.zero();
+        	way.set(currentToTarget);
+        }
+
         /* Compute new current position based on updated velocity */
-        newCurrent.set(velocity).mul(elapsedTimeInSeconds).add(current);
-        current.set(newCurrent);
+        current.add(way);
     }
 
 }

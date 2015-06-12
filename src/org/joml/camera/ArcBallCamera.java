@@ -43,10 +43,8 @@ public class ArcBallCamera {
 	}
 
 	public Matrix4f viewMatrix(Matrix4f mat) {
-		mat.translate(0, 0, -zoomMover.current)
-				.rotateX(betaMover.current).rotateY(alphaMover.current)
+		return mat.translate(0, 0, -zoomMover.current).rotateX(betaMover.current).rotateY(alphaMover.current)
 				.translate(-centerMover.current.x, -centerMover.current.y, -centerMover.current.z);
-		return mat;
 	}
 
 	public void alpha(float alpha) {

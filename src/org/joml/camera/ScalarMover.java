@@ -37,11 +37,11 @@ public class ScalarMover {
 		if (velocity * currentToTarget > 0.0f && directStopDistance >= Math.abs(currentToTarget)) {
 			/* Decelerate */
 			float directDec = maxDeceleration;
-			acceleration = Math.signum(currentToTarget) * -directDec;
+			acceleration = (currentToTarget < 0.0 ? -1 : 1) * -directDec;
 		} else {
 			/* Accelerate */
 			float directAcc = maxAcceleration;
-			acceleration = Math.signum(currentToTarget) * directAcc;
+			acceleration = (currentToTarget < 0.0 ? -1 : 1) * directAcc;
 		}
 		velocity += acceleration * elapsedTimeInSeconds;
 		float way = velocity * elapsedTimeInSeconds;

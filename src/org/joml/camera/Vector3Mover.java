@@ -54,6 +54,11 @@ public class Vector3Mover {
     public float maxDirectAcceleration = 20.0f;
 
     /**
+     * The maximum deceleration directly towards the target.
+     */
+    public float maxDirectDeceleration = 100.0f;
+
+    /**
      * The maximum deceleration (in positive values) towards the velocity
      * component perpendicular to the target direction.
      */
@@ -91,6 +96,12 @@ public class Vector3Mover {
     private final Vector3f newVelocity = new Vector3f();
     private final Vector3f newCurrent = new Vector3f();
 
+    /**
+     * Update the simulation based on the elapsed time since the last update.
+     * 
+     * @param elapsedTimeInSeconds
+     *            the elapsed time in seconds since the last update
+     */
     public void update(float elapsedTimeInSeconds) {
         /* Compute the way we need to got */
         currentToTarget.set(target).sub(current);
@@ -141,12 +152,12 @@ public class Vector3Mover {
          * Compute how far we would move along the direct component if we
          * completely eliminate this velocity component.
          */
-        float directStopDistance = directVelocityComponent.lengthSquared() / (2.0f * maxDirectAcceleration);
+        float directStopDistance = directVelocityComponent.lengthSquared() / (2.0f * maxDirectDeceleration);
         /*
          * Now see how much time it will take us to fully stop the direct
          * movement.
          */
-        float timeToStopDirect = directVelocityComponent.length() / maxDirectAcceleration;
+        float timeToStopDirect = directVelocityComponent.length() / maxDirectDeceleration;
 
         /*
          * Check if we need to decelerate the direct component, because we would
@@ -155,10 +166,20 @@ public class Vector3Mover {
         if (dot >= SMALL_VALUE_THRESHOLD
                 && (directStopDistance >= currentToTarget.length() || timeToStopPerpendicular > timeToStopDirect)) {
             /* We need to decelerate the direct component */
-            directAcceleration.set(currentToTargetNormalized).mul(maxDirectAcceleration).negate();
+            directAcceleration.set(currentToTargetNormalized).mul(maxDirectDeceleration).negate();
         } else {
-            /* We can still accelerate directly towards the target */
-            directAcceleration.set(currentToTargetNormalized).mul(maxDirectAcceleration);
+            /* 
+             * We can still accelerate directly towards the target.
+             * Compute the necessary acceleration to reach the target in the elapsed time.
+             */
+            float neededDirectAcc = currentToTarget.length() / elapsedTimeInSeconds;
+            float directAcc = neededDirectAcc;
+            /* Check if that would be too much acceleration */
+            if (neededDirectAcc > maxDirectAcceleration) {
+                /* Limit to maximum allowed acceleration */
+                directAcc = maxDirectAcceleration;
+            }
+            directAcceleration.set(currentToTargetNormalized).mul(directAcc);
         }
 
         /*

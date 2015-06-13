@@ -24,33 +24,33 @@ package org.joml.camera;
 
 public class ScalarMover {
 
-	public float maxAcceleration = 200.0f;
-	public float maxDeceleration = 200.0f;
-	public float current;
-	public float target;
-	public float velocity;
+    public float maxAcceleration = 200.0f;
+    public float maxDeceleration = 200.0f;
+    public float current;
+    public float target;
+    public float velocity;
 
-	public void update(float elapsedTimeInSeconds) {
-		float currentToTarget = target - current;
-		float directStopDistance = (velocity * velocity) / (2.0f * maxDeceleration);
-		float acceleration = 0.0f;
-		if (velocity * currentToTarget > 0.0f && directStopDistance >= Math.abs(currentToTarget)) {
-			/* Decelerate */
-			float directDec = maxDeceleration;
-			acceleration = (currentToTarget < 0.0 ? -1 : 1) * -directDec;
-		} else {
-			/* Accelerate */
-			float directAcc = maxAcceleration;
-			acceleration = (currentToTarget < 0.0 ? -1 : 1) * directAcc;
-		}
-		velocity += acceleration * elapsedTimeInSeconds;
-		float way = velocity * elapsedTimeInSeconds;
-		if (velocity * currentToTarget > 0.0f && Math.abs(way) > Math.abs(currentToTarget)) {
-			/* We would move too far */
-			velocity = 0.0f;
-			way = currentToTarget;
-		}
-		current += way;
-	}
+    public void update(float elapsedTimeInSeconds) {
+        float currentToTarget = target - current;
+        float directStopDistance = (velocity * velocity) / (2.0f * maxDeceleration);
+        float acceleration = 0.0f;
+        if (velocity * currentToTarget > 0.0f && directStopDistance >= Math.abs(currentToTarget)) {
+            /* Decelerate */
+            float directDec = maxDeceleration;
+            acceleration = (currentToTarget < 0.0 ? -1 : 1) * -directDec;
+        } else {
+            /* Accelerate */
+            float directAcc = maxAcceleration;
+            acceleration = (currentToTarget < 0.0 ? -1 : 1) * directAcc;
+        }
+        velocity += acceleration * elapsedTimeInSeconds;
+        float way = velocity * elapsedTimeInSeconds;
+        if (velocity * currentToTarget > 0.0f && Math.abs(way) > Math.abs(currentToTarget)) {
+            /* We would move too far */
+            velocity = 0.0f;
+            way = currentToTarget;
+        }
+        current += way;
+    }
 
 }

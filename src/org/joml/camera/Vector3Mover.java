@@ -168,9 +168,9 @@ public class Vector3Mover {
             /* We need to decelerate the direct component */
             directAcceleration.set(currentToTargetNormalized).mul(maxDirectDeceleration).negate();
         } else {
-            /* 
-             * We can still accelerate directly towards the target.
-             * Compute the necessary acceleration to reach the target in the elapsed time.
+            /*
+             * We can still accelerate directly towards the target. Compute the
+             * necessary acceleration to reach the target in the elapsed time.
              */
             float neededDirectAcc = currentToTarget.length() / elapsedTimeInSeconds;
             float directAcc = neededDirectAcc;
@@ -209,8 +209,8 @@ public class Vector3Mover {
 
         way.set(velocity).mul(elapsedTimeInSeconds);
         if (way.length() > currentToTarget.length()) {
-        	velocity.zero();
-        	way.set(currentToTarget);
+            velocity.zero();
+            way.set(currentToTarget);
         }
 
         /* Compute new current position based on updated velocity */

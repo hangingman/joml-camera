@@ -24,50 +24,73 @@ package org.joml.camera;
 
 import org.joml.Matrix4f;
 
+/**
+ * A simple arcball camera, which provides smooth acceleration/velocity/elapsed-time based movement/zoom and rotation.
+ * <p>
+ * It makes use of the {@link Vector3Mover} to follow the {@link #center(float, float, float) center} position and
+ * uses the {@link ScalarMover} for the rotation angles.
+ * 
+ * @author Kai Burjack
+ */
 public class ArcBallCamera {
 
-	public Vector3Mover centerMover = new Vector3Mover();
-	{
-		centerMover.maxDirectAcceleration = 5.0f;
-		centerMover.maxDirectDeceleration = 5.0f;
-	}
+    public Vector3Mover centerMover = new Vector3Mover();
+    {
+        centerMover.maxDirectAcceleration = 5.0f;
+        centerMover.maxDirectDeceleration = 5.0f;
+    }
 
-	public final ScalarMover alphaMover = new ScalarMover();
-	public final ScalarMover betaMover = new ScalarMover();
-	public final ScalarMover zoomMover = new ScalarMover();
-	{
-		zoomMover.current = 10.0f;
-		zoomMover.target = 10.0f;
-		zoomMover.maxAcceleration = 10.0f;
-		zoomMover.maxDeceleration = 15.0f;
-	}
+    public final ScalarMover alphaMover = new ScalarMover();
+    public final ScalarMover betaMover = new ScalarMover();
+    public final ScalarMover zoomMover = new ScalarMover();
+    {
+        zoomMover.current = 10.0f;
+        zoomMover.target = 10.0f;
+        zoomMover.maxAcceleration = 10.0f;
+        zoomMover.maxDeceleration = 15.0f;
+    }
 
-	public Matrix4f viewMatrix(Matrix4f mat) {
-		return mat.translate(0, 0, -zoomMover.current).rotateX(betaMover.current).rotateY(alphaMover.current)
-				.translate(-centerMover.current.x, -centerMover.current.y, -centerMover.current.z);
-	}
+    /**
+     * Apply the camera's view transformation to the given matrix by post-multiplying it.
+     * 
+     * @param mat
+     *          the matrix which gets post-multiplied by the camera's view transformation matrix
+     * @return the supplied matrix
+     */
+    public Matrix4f viewMatrix(Matrix4f mat) {
+        /*
+         * Explanation:
+         * - First, translate the center position back to the origin, so that we can rotate about it
+         * - Then, rotate first about Y and then about X (this will ensure that "right" is always parallel to the world's XZ-plane)
+         * - Next, translate the camera back by its distance to the center (the radius of the arcball)
+         */
+        return mat.translate(0, 0, -zoomMover.current)
+                  .rotateX(betaMover.current)
+                  .rotateY(alphaMover.current)
+                  .translate(-centerMover.current.x, -centerMover.current.y, -centerMover.current.z);
+    }
 
-	public void alpha(float alpha) {
-		alphaMover.target = alpha;
-	}
+    public void alpha(float alpha) {
+        alphaMover.target = alpha;
+    }
 
-	public void beta(float beta) {
-		betaMover.target = beta;
-	}
+    public void beta(float beta) {
+        betaMover.target = beta;
+    }
 
-	public void zoom(float zoom) {
-		zoomMover.target = zoom;
-	}
+    public void zoom(float zoom) {
+        zoomMover.target = zoom;
+    }
 
-	public void center(float x, float y, float z) {
-		centerMover.target.set(x, y, z);
-	}
+    public void center(float x, float y, float z) {
+        centerMover.target.set(x, y, z);
+    }
 
-	public void update(float elapsedTimeInSeconds) {
-		alphaMover.update(elapsedTimeInSeconds);
-		betaMover.update(elapsedTimeInSeconds);
-		zoomMover.update(elapsedTimeInSeconds);
-		centerMover.update(elapsedTimeInSeconds);
-	}
+    public void update(float elapsedTimeInSeconds) {
+        alphaMover.update(elapsedTimeInSeconds);
+        betaMover.update(elapsedTimeInSeconds);
+        zoomMover.update(elapsedTimeInSeconds);
+        centerMover.update(elapsedTimeInSeconds);
+    }
 
 }

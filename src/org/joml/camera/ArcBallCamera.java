@@ -28,7 +28,7 @@ import org.joml.Matrix4f;
  * A simple arcball camera, which provides smooth acceleration/velocity/elapsed-time based movement/zoom and rotation.
  * <p>
  * It makes use of the {@link Vector3Mover} to follow the {@link #center(float, float, float) center} position and
- * uses the {@link ScalarMover} for the rotation angles.
+ * uses the {@link ArcRotor} for the rotation angles.
  * 
  * @author Kai Burjack
  */

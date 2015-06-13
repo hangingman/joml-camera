@@ -39,11 +39,13 @@ public class ArcRotor {
     public float velocity;
 
     public void update(float elapsedTimeInSeconds) {
+        if (current == target) {
+            return;
+        }
         float currentToTarget = 180.0f - Math.abs((Math.abs(current - target) % 360.0f) - 180.0f);
         if ((current - target + 360.0f) % 360.0f < 180.0f) {
             currentToTarget *= -1.0f;
         }
-
         float directStopDistance = (velocity * velocity) / (2.0f * maxDeceleration);
         float acceleration = 0.0f;
         if (velocity * currentToTarget > 0.0f && directStopDistance >= Math.abs(currentToTarget)) {
@@ -60,9 +62,10 @@ public class ArcRotor {
         if (velocity * currentToTarget > 0.0f && Math.abs(way) > Math.abs(currentToTarget)) {
             /* We would move too far */
             velocity = 0.0f;
-            way = currentToTarget;
+            current = target;
+        } else {
+            current = (current + way + 360.0f) % 360.0f;
         }
-        current = (current + way + 360.0f) % 360.0f;
     }
 
 }

@@ -31,6 +31,9 @@ public class ScalarMover {
     public float velocity;
 
     public void update(float elapsedTimeInSeconds) {
+        if (current == target) {
+            return;
+        }
         float currentToTarget = target - current;
         float directStopDistance = (velocity * velocity) / (2.0f * maxDeceleration);
         float acceleration = 0.0f;
@@ -48,9 +51,10 @@ public class ScalarMover {
         if (velocity * currentToTarget > 0.0f && Math.abs(way) > Math.abs(currentToTarget)) {
             /* We would move too far */
             velocity = 0.0f;
-            way = currentToTarget;
+            current = target;
+        } else {
+            current += way;
         }
-        current += way;
     }
 
 }

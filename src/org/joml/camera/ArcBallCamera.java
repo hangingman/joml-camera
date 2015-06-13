@@ -40,8 +40,8 @@ public class ArcBallCamera {
         centerMover.maxDirectDeceleration = 5.0f;
     }
 
-    public final ScalarMover alphaMover = new ScalarMover();
-    public final ScalarMover betaMover = new ScalarMover();
+    public final ArcRotor alphaMover = new ArcRotor();
+    public final ArcRotor betaMover = new ArcRotor();
     public final ScalarMover zoomMover = new ScalarMover();
     {
         zoomMover.current = 10.0f;
@@ -70,12 +70,25 @@ public class ArcBallCamera {
                   .translate(-centerMover.current.x, -centerMover.current.y, -centerMover.current.z);
     }
 
-    public void alpha(float alpha) {
-        alphaMover.target = alpha;
+    public void setAlpha(float alpha) {
+        alphaMover.target = alpha % 360;
     }
 
-    public void beta(float beta) {
+    public void setBeta(float beta) {
+        if (beta < -90.0f) {
+            beta = -90.0f;
+        } else if (beta > 90.0f) {
+            beta = 90.0f;
+        }
         betaMover.target = beta;
+    }
+
+    public float getAlpha() {
+        return alphaMover.target;
+    }
+
+    public float getBeta() {
+        return betaMover.target;
     }
 
     public void zoom(float zoom) {

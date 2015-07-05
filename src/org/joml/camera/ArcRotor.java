@@ -32,39 +32,39 @@ package org.joml.camera;
  */
 public class ArcRotor {
 
-    public float maxAcceleration = 250.0f;
-    public float maxDeceleration = 250.0f;
-    public float target;
-    public float current;
-    public float velocity;
+    public double maxAcceleration = Math.toRadians(250.0f);
+    public double maxDeceleration = Math.toRadians(250.0f);
+    public double target;
+    public double current;
+    public double velocity;
 
     public void update(float elapsedTimeInSeconds) {
         if (current == target) {
             return;
         }
-        float currentToTarget = 180.0f - Math.abs((Math.abs(current - target) % 360.0f) - 180.0f);
-        if ((current - target + 360.0f) % 360.0f < 180.0f) {
+        double currentToTarget = Math.PI - Math.abs((Math.abs(current - target) % (2.0 * Math.PI)) - Math.PI);
+        if ((current - target + 2.0 * Math.PI) % (2.0 * Math.PI) < Math.PI) {
             currentToTarget *= -1.0f;
         }
-        float directStopDistance = (velocity * velocity) / (2.0f * maxDeceleration);
-        float acceleration = 0.0f;
+        double directStopDistance = (velocity * velocity) / (2.0f * maxDeceleration);
+        double acceleration = 0.0f;
         if (velocity * currentToTarget > 0.0f && directStopDistance >= Math.abs(currentToTarget)) {
             /* Decelerate */
-            float directDec = maxDeceleration;
+            double directDec = maxDeceleration;
             acceleration = (currentToTarget < 0.0 ? -1 : 1) * -directDec;
         } else {
             /* Accelerate */
-            float directAcc = maxAcceleration;
+            double directAcc = maxAcceleration;
             acceleration = (currentToTarget < 0.0 ? -1 : 1) * directAcc;
         }
         velocity += acceleration * elapsedTimeInSeconds;
-        float way = velocity * elapsedTimeInSeconds;
+        double way = velocity * elapsedTimeInSeconds;
         if (velocity * currentToTarget > 0.0f && Math.abs(way) > Math.abs(currentToTarget)) {
             /* We would move too far */
             velocity = 0.0f;
             current = target;
         } else {
-            current = (current + way + 360.0f) % 360.0f;
+            current = (current + way + 2.0 * Math.PI) % (2.0 * Math.PI);
         }
     }
 

@@ -161,7 +161,7 @@ public class Vector3Mover {
 
         /*
          * Check if we need to decelerate the direct component, because we would
-         * move too far if we woudn't.
+         * move too far if we didn't.
          */
         if (dot >= SMALL_VALUE_THRESHOLD
                 && (directStopDistance >= currentToTarget.length() || timeToStopPerpendicular > timeToStopDirect)) {

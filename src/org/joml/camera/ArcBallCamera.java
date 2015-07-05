@@ -64,34 +64,34 @@ public class ArcBallCamera {
          * - Then, rotate first about Y and then about X (this will ensure that "right" is always parallel to the world's XZ-plane)
          * - Next, translate the camera back by its distance to the center (the radius of the arcball)
          */
-        return mat.translate(0, 0, -zoomMover.current)
-                  .rotateX(betaMover.current)
-                  .rotateY(alphaMover.current)
+        return mat.translate(0, 0, (float) -zoomMover.current)
+                  .rotateX((float) betaMover.current)
+                  .rotateY((float) alphaMover.current)
                   .translate(-centerMover.current.x, -centerMover.current.y, -centerMover.current.z);
     }
 
-    public void setAlpha(float alpha) {
-        alphaMover.target = alpha % 360;
+    public void setAlpha(double alpha) {
+        alphaMover.target = alpha % (2.0 * Math.PI);
     }
 
-    public void setBeta(float beta) {
-        if (beta < -90.0f) {
-            beta = -90.0f;
-        } else if (beta > 90.0f) {
-            beta = 90.0f;
+    public void setBeta(double beta) {
+        if (beta < -Math.PI / 2.0) {
+            beta = -Math.PI / 2.0;
+        } else if (beta > Math.PI / 2.0) {
+            beta = Math.PI / 2.0;
         }
         betaMover.target = beta;
     }
 
-    public float getAlpha() {
+    public double getAlpha() {
         return alphaMover.target;
     }
 
-    public float getBeta() {
+    public double getBeta() {
         return betaMover.target;
     }
 
-    public void zoom(float zoom) {
+    public void zoom(double zoom) {
         zoomMover.target = zoom;
     }
 

@@ -26,7 +26,7 @@ package org.joml.camera;
  * Rotates a point on a circle/arc to reach a target angle using the rotation
  * direction with the shortest distance on the circle.
  * <p>
- * Angles are specified in degrees.
+ * Angles are specified in radians.
  * 
  * @author Kai Burjack
  */

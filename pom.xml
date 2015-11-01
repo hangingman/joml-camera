@@ -46,11 +46,20 @@
 			</plugin>
 		</plugins>
 	</build>
+	<repositories>
+		<repository>
+			<id>oss.sonatype.org</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>org.joml</groupId>
 			<artifactId>joml</artifactId>
-			<version>1.6.5</version>
+			<version>1.6.7-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

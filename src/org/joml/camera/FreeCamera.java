@@ -105,7 +105,7 @@ public class FreeCamera {
      *
      * @param m
      *            the matrix to apply the view transformation to
-     * @return this
+     * @return m
      */
     public Matrix4f apply(Matrix4f m) {
         return m.rotate(rotation).translate(-position.x, -position.y, -position.z);

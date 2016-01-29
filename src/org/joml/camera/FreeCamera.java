@@ -75,7 +75,7 @@ public class FreeCamera {
      * @return dest
      */
     public Vector3f right(Vector3f dest) {
-        return rotation.conjugate(tmp).transform(dest.set(1, 0, 0));
+        return rotation.positiveX(dest);
     }
 
     /**
@@ -86,7 +86,7 @@ public class FreeCamera {
      * @return dest
      */
     public Vector3f up(Vector3f dest) {
-        return rotation.conjugate(tmp).transform(dest.set(0, 1, 0));
+        return rotation.positiveY(dest);
     }
 
     /**
@@ -97,7 +97,7 @@ public class FreeCamera {
      * @return dest
      */
     public Vector3f forward(Vector3f dest) {
-        return rotation.conjugate(tmp).transform(dest.set(0, 0, -1));
+        return rotation.positiveZ(dest).negate();
     }
 
     /**

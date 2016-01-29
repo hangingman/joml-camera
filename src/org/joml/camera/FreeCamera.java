@@ -61,7 +61,7 @@ public class FreeCamera {
         tmp.rotationXYZ(angularVel.x * dt,
                         angularVel.y * dt,
                         angularVel.z * dt)
-                   .mul(rotation, rotation);
+           .mul(rotation, rotation);
         // update position based on linear velocity
         position.fma(dt, linearVel);
         return this;

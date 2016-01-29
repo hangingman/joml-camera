@@ -37,18 +37,13 @@ public class FreeCamera {
     public Vector3f linearAcc = new Vector3f();
     public Vector3f linearVel = new Vector3f();
 
-    /** ALWAYS rotation about the local XYZ axes of the camera! */
+    /** Always rotation about the local XYZ axes of the camera! */
     public Vector3f angularAcc = new Vector3f();
     public Vector3f angularVel = new Vector3f();
 
     public Vector3f position = new Vector3f(0, 0, 10);
     public Quaternionf rotation = new Quaternionf();
-    private Quaternionf rotationInv = new Quaternionf();
-
-    /* Computed world-space vectors */
-    public Vector3f forward = new Vector3f(0, 0, -1);
-    public Vector3f right = new Vector3f(1, 0, 0);
-    public Vector3f up = new Vector3f(0, 1, 0);
+    private Quaternionf tmp = new Quaternionf();
 
     /**
      * Update this {@link FreeCamera} based on the given elapsed time.
@@ -63,17 +58,46 @@ public class FreeCamera {
         // update angular velocity based on angular acceleration
         angularVel.fma(dt, angularAcc);
         // update rotation based on angular velocity
-        rotation.rotateAxis(angularVel.x * dt, right);
-        rotation.rotateAxis(angularVel.y * dt, up);
-        rotation.rotateAxis(angularVel.z * dt, forward);
+        tmp.rotationXYZ(angularVel.x * dt,
+                                angularVel.y * dt,
+                                angularVel.z * dt)
+                   .mul(rotation, rotation);
         // update position based on linear velocity
         position.fma(dt, linearVel);
-        // compute new world-space forward/up/right vectors
-        rotation.conjugate(rotationInv);
-        rotationInv.transform(forward.set(0, 0, -1));
-        rotationInv.transform(up.set(0, 1, 0));
-        rotationInv.transform(right.set(1, 0, 0));
         return this;
+    }
+
+    /**
+     * Compute the world-space 'right' vector and store it into <code>dest</code>.
+     * 
+     * @param dest
+     *          will hold the result
+     * @return dest
+     */
+    public Vector3f right(Vector3f dest) {
+        return rotation.conjugate(tmp).transform(dest.set(1, 0, 0));
+    }
+
+    /**
+     * Compute the world-space 'up' vector and store it into <code>dest</code>.
+     * 
+     * @param dest
+     *          will hold the result
+     * @return dest
+     */
+    public Vector3f up(Vector3f dest) {
+        return rotation.conjugate(tmp).transform(dest.set(0, 1, 0));
+    }
+
+    /**
+     * Compute the world-space 'forward' vector and store it into <code>dest</code>.
+     * 
+     * @param dest
+     *          will hold the result
+     * @return dest
+     */
+    public Vector3f forward(Vector3f dest) {
+        return rotation.conjugate(tmp).transform(dest.set(0, 0, -1));
     }
 
     /**
@@ -86,4 +110,5 @@ public class FreeCamera {
     public Matrix4f apply(Matrix4f m) {
         return m.rotate(rotation).translate(-position.x, -position.y, -position.z);
     }
+
 }

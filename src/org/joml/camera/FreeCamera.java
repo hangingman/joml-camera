@@ -43,7 +43,6 @@ public class FreeCamera {
 
     public Vector3f position = new Vector3f(0, 0, 10);
     public Quaternionf rotation = new Quaternionf();
-    private Quaternionf tmp = new Quaternionf();
 
     /**
      * Update this {@link FreeCamera} based on the given elapsed time.
@@ -58,10 +57,12 @@ public class FreeCamera {
         // update angular velocity based on angular acceleration
         angularVel.fma(dt, angularAcc);
         // update rotation based on angular velocity
-        tmp.rotationXYZ(angularVel.x * dt,
-                        angularVel.y * dt,
-                        angularVel.z * dt)
-           .mul(rotation, rotation);
+        // premultiply rotateXYZ(angularVel*dt) to 'rotation':
+        rotation.conjugate()
+                .rotateXYZ(-angularVel.x * dt,
+                           -angularVel.y * dt,
+                           -angularVel.z * dt)
+                .conjugate();
         // update position based on linear velocity
         position.fma(dt, linearVel);
         return this;

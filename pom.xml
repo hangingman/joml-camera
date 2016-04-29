@@ -121,7 +121,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.joml</groupId>
-			<artifactId>joml-array</artifactId>
+			<artifactId>joml</artifactId>
 			<version>1.8.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>

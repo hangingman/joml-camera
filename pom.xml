@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.joml</groupId>
-	<artifactId>joml-camera</artifactId>
+	<artifactId>joml-camera-jni</artifactId>
 	<version>1.1.0-SNAPSHOT</version>
 	<name>JOML Camera</name>
 	<description>Java OpenGL Math Library Camera</description>
@@ -121,7 +121,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.joml</groupId>
-			<artifactId>joml</artifactId>
+			<artifactId>joml-jni</artifactId>
 			<version>1.8.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>

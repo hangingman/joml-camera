@@ -149,7 +149,8 @@ public class OrthoCameraControl {
     }
 
     private Vector3f ndc(float winX, float winY) {
-        float x = (winX / vp[2] * 2.0f - 1.0f) * (vp[2] / vp[3]);
+        float aspect = (float) vp[2] / vp[3];
+        float x = (winX / vp[2] * 2.0f - 1.0f) * aspect;
         float y = winY / vp[3] * 2.0f - 1.0f;
         return v.set(x, y, 0.0f);
     }

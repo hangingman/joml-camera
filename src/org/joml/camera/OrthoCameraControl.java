@@ -2,7 +2,6 @@ package org.joml.camera;
 
 import org.joml.Math;
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -36,9 +35,8 @@ public class OrthoCameraControl {
     private float mouseDownX, mouseDownY;
     private boolean[] mouseDown = new boolean[3];
     private Vector3f v = new Vector3f();
-    private Quaternionf q = new Quaternionf();
 
-    private float minRotateWinDistance = 100.0f;
+    private float minRotateWinDistance2 = 100.0f * 100.0f;
 
     /**
      * @param extents
@@ -56,7 +54,7 @@ public class OrthoCameraControl {
      *            that rotation is allowed
      */
     public void setMinRotateWinDistance(float minRotateWinDistance) {
-        this.minRotateWinDistance = minRotateWinDistance;
+        this.minRotateWinDistance2 = minRotateWinDistance * minRotateWinDistance;
     }
 
     /**
@@ -119,17 +117,18 @@ public class OrthoCameraControl {
             view.translate(x0 - x1, y0 - y1, 0.0f);
             update();
         } else if (mouseDown[MOUSE_RIGHT]) {
-            /* Check if rotation is already possible */
+            /* Check if rotation is possible */
             float dx = winX - mouseDownX;
             float dy = winY - mouseDownY;
-            float d = (float) Math.sqrt(dx * dx + dy * dy);
-            if (d > minRotateWinDistance) {
+            if (dx * dx + dy * dy > minRotateWinDistance2) {
                 /* Rotate */
                 float dx0 = winX - mouseDownX, dy0 = winY - mouseDownY;
                 float dx1 = mouseX - mouseDownX, dy1 = mouseY - mouseDownY;
                 float ang = (float) Math.atan2(dx1 * dy0 - dy1 * dx0, dx1 * dx0 + dy1 * dy0);
                 Vector3f ndc = ndc(mouseDownX, mouseDownY);
-                view.rotateAroundLocal(q.rotationZ(ang), ndc.x, ndc.y, 0.0f);
+                view.translateLocal(-ndc.x, -ndc.y, 0.0f)
+                    .rotateLocal(ang, 0, 0, 1)
+                    .translateLocal(ndc.x, ndc.y, 0.0f);
                 update();
             }
         }

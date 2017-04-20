@@ -12,9 +12,9 @@ import org.joml.Vector4f;
  * Call the following methods:
  * <ul>
  * <li>{@link #setSize(int, int)} when the window/control size changes
- * <li>{@link #onMouseDown()} when further calls to {@link #onMouseMove(int, int)} should pan the view
+ * <li>{@link #onMouseDown(int)} when further calls to {@link #onMouseMove(int, int)} should pan/rotate the view
  * <li>{@link #onMouseMove(int, int)} everytime the mouse moves
- * <li>{@link #onMouseUp()} when panning should stop
+ * <li>{@link #onMouseUp(int)} when panning/rotating should stop
  * <li>{@link #zoom(float)} to zoom in/out
  * <li>{@link #viewproj()} to obtain the current view-projection matrix
  * <li>{@link #center(float, float)} to center the view onto the given coordinate
@@ -127,9 +127,9 @@ public class OrthoCameraControl {
                 /* Rotate */
                 float dx0 = winX - mouseDownX, dy0 = winY - mouseDownY;
                 float dx1 = mouseX - mouseDownX, dy1 = mouseY - mouseDownY;
-                float ang = (float) Math.atan2(dx0 * dy1 - dy0 * dx1, dx0 * dx1 + dy0 * dy1);
+                float ang = (float) Math.atan2(dx1 * dy0 - dy1 * dx0, dx1 * dx0 + dy1 * dy0);
                 Vector3f ndc = ndc(mouseDownX, mouseDownY);
-                view.rotateAroundLocal(q.rotationZ(-ang), ndc.x, ndc.y, 0.0f);
+                view.rotateAroundLocal(q.rotationZ(ang), ndc.x, ndc.y, 0.0f);
                 update();
             }
         }
@@ -155,7 +155,7 @@ public class OrthoCameraControl {
 
     /**
      * @param dest
-     *            contains the view rectangle as {x: minX, y: minY, z: width, w: height}
+     *            contains the view rectangle as {x: minX, y: minY, z: maxX, w: maxY}
      * @return dest
      */
     public Vector4f viewRect(Vector4f dest) {

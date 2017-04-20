@@ -125,13 +125,14 @@ public class OrthoCameraControl {
      *            the y coordinate in window coordinates/pixels
      */
     public void onMouseMove(int winX, int winY) {
+        Vector3f ndc;
         if (mouseDown[MOUSE_LEFT]) {
             /* Move */
-            invviewproj.unprojectInv(v.set(winX, winY, 0.0f), vp, v);
-            float x0 = v.x, y0 = v.y;
-            invviewproj.unprojectInv(v.set(mouseX, mouseY, 0.0f), vp, v);
-            float x1 = v.x, y1 = v.y;
-            view.translate(x0 - x1, y0 - y1, 0.0f);
+            ndc = ndc(winX, winY);
+            float x0 = ndc.x, y0 = ndc.y;
+            ndc = ndc(mouseX, mouseY);
+            float x1 = ndc.x, y1 = ndc.y;
+            view.translateLocal(x0 - x1, y0 - y1, 0.0f);
             update();
         } else if (mouseDown[MOUSE_RIGHT]) {
             /* Check if rotation is possible */
@@ -142,7 +143,7 @@ public class OrthoCameraControl {
                 float dx0 = winX - mouseDownX, dy0 = winY - mouseDownY;
                 float dx1 = mouseX - mouseDownX, dy1 = mouseY - mouseDownY;
                 float ang = (float) Math.atan2(dx1 * dy0 - dy1 * dx0, dx1 * dx0 + dy1 * dy0);
-                Vector3f ndc = ndc(mouseDownX, mouseDownY);
+                ndc = ndc(mouseDownX, mouseDownY);
                 view.translateLocal(-ndc.x, -ndc.y, 0.0f)
                     .rotateLocal(ang, 0, 0, 1)
                     .translateLocal(ndc.x, ndc.y, 0.0f);

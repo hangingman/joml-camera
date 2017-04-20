@@ -97,7 +97,7 @@ public class OrthoCameraControl {
         mouseDown[button] = true;
         if (button == MOUSE_CENTER) {
             /* Reset rotation with mouse position as center */
-            view.positiveX(v);
+            view.positiveX(v).negate();
             float ang = (float) Math.atan2(v.y, v.x);
             Vector3f ndc = ndc(mouseDownX, mouseDownY);
             view.translateLocal(-ndc.x, -ndc.y, 0.0f)

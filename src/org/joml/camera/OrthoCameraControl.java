@@ -2,6 +2,8 @@ package org.joml.camera;
 
 import org.joml.Math;
 import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -73,6 +75,9 @@ public class OrthoCameraControl {
 
     public Matrix4f viewproj() {
         return viewproj;
+    }
+    public Matrix4f invviewproj() {
+        return invviewproj;
     }
 
     private void update() {
@@ -185,6 +190,21 @@ public class OrthoCameraControl {
             maxY = maxY > v.y ? maxY : v.y;
         }
         return dest.set(minX, minY, maxX, maxY);
+    }
+
+    /**
+     * @param corner
+     *            one corner of the view
+     * @param xDest
+     *            the direction and length (in world coordinates) of the view along the NDC x axis
+     * @param yDest
+     *            the direction and length (in world coordinates) of the view along the NDC y axis
+     */
+    public void viewSpan(Vector2f corner, Vector2f xDest, Vector2f yDest) {
+        viewproj.frustumCorner(Matrix4fc.CORNER_NXNYNZ, v);
+        corner.set(v.x, v.y);
+        xDest.set(viewproj.m00(), viewproj.m10()).mul(2.0f);
+        yDest.set(viewproj.m01(), viewproj.m11()).mul(2.0f);
     }
 
 }

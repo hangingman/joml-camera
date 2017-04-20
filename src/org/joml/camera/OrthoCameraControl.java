@@ -77,7 +77,9 @@ public class OrthoCameraControl {
 
     private void update() {
         float aspect = (float) vp[2] / vp[3];
-        viewproj.setOrtho2D(-aspect, +aspect, -1, +1).mulAffine(view).invert(invviewproj);
+        viewproj.setOrtho2D(-aspect, +aspect, -1, +1)
+                .mulAffine(view)
+                .invertAffine(invviewproj);
     }
 
     /**
@@ -158,7 +160,9 @@ public class OrthoCameraControl {
      */
     public void zoom(float scale) {
         Vector3f ndc = ndc(mouseX, mouseY);
-        view.scaleAroundLocal(scale, ndc.x, ndc.y, 0);
+        view.translateLocal(-ndc.x, -ndc.y, 0.0f)
+            .scaleLocal(scale, scale, scale)
+            .translateLocal(ndc.x, ndc.y, 0.0f);
         update();
     }
 

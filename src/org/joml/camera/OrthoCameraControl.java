@@ -2,7 +2,6 @@ package org.joml.camera;
 
 import org.joml.Math;
 import org.joml.Matrix4f;
-import org.joml.Matrix4fc;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -202,10 +201,12 @@ public class OrthoCameraControl {
      *            the direction and length (in world coordinates) of the view along the NDC y axis
      */
     public void viewSpan(Vector2f cornerDest, Vector2f xDest, Vector2f yDest) {
-        viewproj.frustumCorner(Matrix4fc.CORNER_NXNYNZ, v);
+        invviewproj.transformPosition(v.set(-1, -1, 0));
         cornerDest.set(v.x, v.y);
-        xDest.set(viewproj.m00(), viewproj.m10()).mul(2.0f);
-        yDest.set(viewproj.m01(), viewproj.m11()).mul(2.0f);
+        invviewproj.transformPosition(v.set(+1, -1, 0));
+        xDest.set(v.x - cornerDest.x, v.y - cornerDest.y);
+        invviewproj.transformPosition(v.set(-1, +1, 0));
+        yDest.set(v.x - cornerDest.x, v.y - cornerDest.y);
     }
 
 }

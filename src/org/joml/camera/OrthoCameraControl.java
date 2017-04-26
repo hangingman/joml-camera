@@ -1,6 +1,7 @@
 package org.joml.camera;
 
 import org.joml.Math;
+import org.joml.Matrix3x2f;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -28,14 +29,15 @@ public class OrthoCameraControl {
     public static int MOUSE_RIGHT = 1;
     public static int MOUSE_CENTER = 2;
 
-    private Matrix4f view = new Matrix4f();
+    private Matrix3x2f view = new Matrix3x2f();
     private Matrix4f viewproj = new Matrix4f();
     private Matrix4f invviewproj = new Matrix4f();
     private int[] vp = new int[4];
     private float mouseX, mouseY;
     private float mouseDownX, mouseDownY;
     private boolean[] mouseDown = new boolean[3];
-    private Vector3f v = new Vector3f();
+    private Vector2f v = new Vector2f();
+    private Vector3f v3 = new Vector3f();
 
     private float minRotateWinDistance2 = 100.0f * 100.0f;
 
@@ -44,7 +46,7 @@ public class OrthoCameraControl {
      *            the initial extents in world coordinates
      */
     public OrthoCameraControl(float extents) {
-        view.setOrtho2D(-extents, extents, -extents, extents);
+        view.view(-extents, extents, -extents, extents);
         update();
     }
 
@@ -82,7 +84,7 @@ public class OrthoCameraControl {
     private void update() {
         float aspect = (float) vp[2] / vp[3];
         viewproj.setOrtho2D(-aspect, +aspect, -1, +1)
-                .mulAffine(view)
+                .mul(view)
                 .invertAffine(invviewproj);
     }
 
@@ -93,7 +95,7 @@ public class OrthoCameraControl {
      *            the y coordiante of the point to center on in world coordinates
      */
     public void center(float x, float y) {
-        view.setTranslation(0, 0, 0).translate(-x, -y, 0);
+        view.setTranslation(0, 0).translate(-x, -y);
         update();
     }
 
@@ -105,10 +107,10 @@ public class OrthoCameraControl {
             /* Reset rotation with mouse position as center */
             view.positiveX(v).negate();
             float ang = (float) Math.atan2(v.y, v.x);
-            Vector3f ndc = ndc(mouseDownX, mouseDownY);
-            view.translateLocal(-ndc.x, -ndc.y, 0.0f)
-                .rotateLocal(ang, 0, 0, 1)
-                .translateLocal(ndc.x, ndc.y, 0.0f);
+            Vector2f ndc = ndc(mouseDownX, mouseDownY);
+            view.translateLocal(-ndc.x, -ndc.y)
+                .rotateLocal(ang)
+                .translateLocal(ndc.x, ndc.y);
             update();
         }
     }
@@ -124,14 +126,14 @@ public class OrthoCameraControl {
      *            the y coordinate in window coordinates/pixels
      */
     public void onMouseMove(int winX, int winY) {
-        Vector3f ndc;
+        Vector2f ndc;
         if (mouseDown[MOUSE_LEFT]) {
             /* Move */
             ndc = ndc(winX, winY);
             float x0 = ndc.x, y0 = ndc.y;
             ndc = ndc(mouseX, mouseY);
             float x1 = ndc.x, y1 = ndc.y;
-            view.translateLocal(x0 - x1, y0 - y1, 0.0f);
+            view.translateLocal(x0 - x1, y0 - y1);
             update();
         } else if (mouseDown[MOUSE_RIGHT]) {
             /* Check if rotation is possible */
@@ -143,9 +145,9 @@ public class OrthoCameraControl {
                 float dx1 = mouseX - mouseDownX, dy1 = mouseY - mouseDownY;
                 float ang = (float) Math.atan2(dx1 * dy0 - dy1 * dx0, dx1 * dx0 + dy1 * dy0);
                 ndc = ndc(mouseDownX, mouseDownY);
-                view.translateLocal(-ndc.x, -ndc.y, 0.0f)
-                    .rotateLocal(ang, 0, 0, 1)
-                    .translateLocal(ndc.x, ndc.y, 0.0f);
+                view.translateLocal(-ndc.x, -ndc.y)
+                    .rotateLocal(ang)
+                    .translateLocal(ndc.x, ndc.y);
                 update();
             }
         }
@@ -153,11 +155,11 @@ public class OrthoCameraControl {
         mouseY = winY;
     }
 
-    private Vector3f ndc(float winX, float winY) {
+    private Vector2f ndc(float winX, float winY) {
         float aspect = (float) vp[2] / vp[3];
         float x = (winX / vp[2] * 2.0f - 1.0f) * aspect;
         float y = winY / vp[3] * 2.0f - 1.0f;
-        return v.set(x, y, 0.0f);
+        return v.set(x, y);
     }
 
     /**
@@ -165,10 +167,10 @@ public class OrthoCameraControl {
      *            the scale factor. &lt; 1.0 to zoom out; &gt; 1.0 to zoom in
      */
     public void zoom(float scale) {
-        Vector3f ndc = ndc(mouseX, mouseY);
-        view.translateLocal(-ndc.x, -ndc.y, 0.0f)
-            .scaleLocal(scale, scale, scale)
-            .translateLocal(ndc.x, ndc.y, 0.0f);
+        Vector2f ndc = ndc(mouseX, mouseY);
+        view.translateLocal(-ndc.x, -ndc.y)
+            .scaleLocal(scale, scale)
+            .translateLocal(ndc.x, ndc.y);
         update();
     }
 
@@ -183,11 +185,11 @@ public class OrthoCameraControl {
         for (int i = 0; i < 4; i++) {
             float x = ((i & 1) << 1) - 1.0f;
             float y = (((i >>> 1) & 1) << 1) - 1.0f;
-            invviewproj.transformPosition(v.set(x, y, 0.0f));
-            minX = minX < v.x ? minX : v.x;
-            minY = minY < v.y ? minY : v.y;
-            maxX = maxX > v.x ? maxX : v.x;
-            maxY = maxY > v.y ? maxY : v.y;
+            invviewproj.transformPosition(v3.set(x, y, 0));
+            minX = minX < v3.x ? minX : v3.x;
+            minY = minY < v3.y ? minY : v3.y;
+            maxX = maxX > v3.x ? maxX : v3.x;
+            maxY = maxY > v3.y ? maxY : v3.y;
         }
         return dest.set(minX, minY, maxX, maxY);
     }
@@ -201,12 +203,10 @@ public class OrthoCameraControl {
      *            the direction and length (in world coordinates) of the view along the NDC y axis
      */
     public void viewSpan(Vector2f cornerDest, Vector2f xDest, Vector2f yDest) {
-        invviewproj.transformPosition(v.set(-1, -1, 0));
-        cornerDest.set(v.x, v.y);
-        invviewproj.transformPosition(v.set(+1, -1, 0));
-        xDest.set(v.x - cornerDest.x, v.y - cornerDest.y);
-        invviewproj.transformPosition(v.set(-1, +1, 0));
-        yDest.set(v.x - cornerDest.x, v.y - cornerDest.y);
+        invviewproj.transformPosition(v3.set(-1, -1, 0));
+        cornerDest.set(v3.x, v3.y);
+        xDest.set(2*invviewproj.m00(), 2*invviewproj.m10());
+        yDest.set(2*invviewproj.m01(), 2*invviewproj.m11());
     }
 
 }
